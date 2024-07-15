@@ -12,7 +12,7 @@ export const getPostByUserId = async (req, res) => {
         return successResponse(res, 200, "Success get posts!", posts, posts.length);
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to get posts!", error);
+        errorResponse(res, 500, "Failed to get posts!", error.message);
 
     }
 };
@@ -25,7 +25,7 @@ export const getOnePostByUserId = async (req, res) => {
 
         if (posts.length === 0) return errorResponse(res, 404, "Posts is not found!");
 
-        const post = posts.find((data) => data.id == params.id);
+        const post = posts.find((data) => data.id == params.post_id);
 
         if (!post) return errorResponse(res, 404, "Post is not found!");
 

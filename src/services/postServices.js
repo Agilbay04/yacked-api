@@ -3,26 +3,37 @@ import { currentDate } from "../helpers/dateHelper.js";
 
 export const getPostDataByUserId = async (userId) => {
     try {
-        return await db.post.findMany({
+        const posts =  await db.post.findMany({
             where: {
                 user_id: userId,
                 deleted: 0
             },
-            include: {
+            select: {
+                id: true,
+                post: true,
+                created_at: true,
+                updated_at: true,
+                user_id: true,
                 user: {
-                    select: { username: true, full_name: true }
+                    select: { username: true },
                 },
-            },
-            include: {
                 comment: {
-                    include: {
+                    select: {
+                        id: true,
+                        comment: true,
+                        created_at: true,
+                        updated_at: true,
+                        user_id: true,
                         user: {
-                            select: { username: true, full_name: true }
+                            select: { username: true }
                         }
                     }
                 }
             }
         });
+
+        return posts;
+
 
     } catch (error) {
         console.error("Failed to get post data!", error);
@@ -51,9 +62,26 @@ export const getPostDataById = async (id) => {
             where: {
                 id: id
             },
-            include: {
+            select: {
+                id: true,
+                post: true,
+                created_at: true,
+                updated_at: true,
+                user_id: true,
                 user: {
-                    select: { username: true, full_name: true }
+                    select: { username: true }
+                },
+                comment: {
+                    select: {
+                        id: true,
+                        comment: true,
+                        created_at: true,
+                        updated_at: true,
+                        user_id: true,
+                        user: {
+                            select: { username: true }
+                        }
+                    }
                 }
             }
         });

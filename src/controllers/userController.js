@@ -67,3 +67,8 @@ export const deleteUser = async (req, res) => {
         errorResponse(res, 500, "Failed delete user data!", error);;
     }
 }
+
+export const testCheckSession = (req, res) => {
+    const data = req.user;
+    res.send(data);
+};

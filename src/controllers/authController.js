@@ -3,10 +3,14 @@ import { createUserData, getUserDataByUsername } from "../services/userServices.
 import { successResponse, errorResponse } from "../helpers/responseHelper.js";
 import { getAccessToken, getRefreshToken, checkPassword } from "../helpers/authHelper.js";
 import { deleteUserTokenData, getUserDataByToken, updateUserToken } from "../services/authServices.js";
-import { currentDate } from "../helpers/dateHelper.js";
+import { validationResult } from "express-validator";
 
 export const login = async (req, res) => {
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) return errorResponse(res, 400, "Validation error!", errors.array());
+
         const { username, password } = req.body;
 
         const user = await getUserDataByUsername(username);
@@ -79,6 +83,10 @@ export const logout = async (req, res) => {
 
 export const register = async (req, res) => {
     try {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) return errorResponse(res, 400, "Validation error!", errors.array());
+
         const newUser = req.body;
     
         await createUserData(newUser);

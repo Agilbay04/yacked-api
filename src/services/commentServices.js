@@ -24,9 +24,14 @@ export const getCommentDataByPostId = async (id) => {
             where: {
                 post_id: id
             },
-            include: {
+            select: {
+                id: true,
+                comment: true,
+                created_at: true,
+                updated_at: true,
+                user_id: true,
                 user: {
-                    select: { username: true, full_name: true }
+                    select: { username: true }
                 }
             }
         });
@@ -43,9 +48,14 @@ export const getCommentDataById = async (id) => {
             where: {
                 id: id
             },
-            include: {
+            select: {
+                id: true,
+                comment: true,
+                created_at: true,
+                updated_at: true,
+                user_id: true,
                 user: {
-                    select: { username: true, full_name: true }
+                    select: { username: true }
                 }
             }
         })
