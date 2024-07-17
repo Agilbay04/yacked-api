@@ -26,7 +26,7 @@ export const getUserById = async (req, res) => {
         return successResponse(res, 200, "Success get user data!", user);
     
     } catch (error) {
-        errorResponse(res, "Failed to get user data!");
+        errorResponse(res, 500, "Failed to get user data!");
 
     }
 };

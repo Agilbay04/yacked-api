@@ -57,8 +57,32 @@ const routes = express.Router();
  *                       type: string
  *                     access_token:
  *                       type: string
+ *       400:
+ *         description: Error validation!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *       500:
- *         description: wrong username or password!
+ *         description: Wrong username or password!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.post('/login', loginValidation, login);
 /** 
@@ -70,6 +94,28 @@ routes.post('/login', loginValidation, login);
  *     responses:
  *       200:
  *         description: Logout success!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       204:
+ *         description: No content available!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: User data not found!
  *         content:
  *           application/json:
  *             schema:
@@ -146,7 +192,33 @@ routes.delete('/logout', logout);
  *                 message:
  *                   type: string
  *       400:
- *         description: Registration account failed!
+ *         description: Validation error!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
  */
 routes.post('/register', registerValidation, register);
 /**
@@ -204,7 +276,7 @@ routes.get('/token', token);
  *     tags: [User]
  *     responses:
  *       200:
- *         description: A list of users
+ *         description: Success get users data!
  *         content:
  *           application/json:
  *             schema:
@@ -237,6 +309,28 @@ routes.get('/token', token);
  *                         format: date-time
  *                 totalRecord:
  *                   type: integer
+ *       404:
+ *         description: User data is not found!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: 
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to get users data!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.get('/users', verifyToken, getAllUsers);
 /**
@@ -292,6 +386,17 @@ routes.get('/users', verifyToken, getAllUsers);
  *                   type: string
  *                 message:
  *                   type: string
+ *       500:
+ *         description: Failed to get users data!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.get('/user/:id', verifyToken, getUserById);
 /**
@@ -333,6 +438,17 @@ routes.get('/user/:id', verifyToken, getUserById);
  *                   type: string
  *                 message:
  *                   type: string
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  *       500:
  *         description: Failed update user data!
  *         content:
@@ -362,6 +478,17 @@ routes.put('/user/:id', verifyToken, updateUser);
  *     responses:
  *       200:
  *         description: Success delete user data!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: User not found
  *         content:
  *           application/json:
  *             schema:
@@ -473,7 +600,17 @@ routes.delete('/user/:id', verifyToken, deleteUser);
  *                   type: string
  *                 message:
  *                   type: string
- *       
+ *       500:
+ *         description: Failed to get post!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.get('/post/user/:user_id', verifyToken, getPostByUserId);
 /**
@@ -562,7 +699,17 @@ routes.get('/post/user/:user_id', verifyToken, getPostByUserId);
  *                   type: string
  *                 message:
  *                   type: string
- *       
+ *       500:
+ *         description: Failed to get post!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.get('/post/:post_id/user/:user_id', verifyToken, getOnePostByUserId);
 /**
@@ -645,7 +792,17 @@ routes.get('/post/:post_id/user/:user_id', verifyToken, getOnePostByUserId);
  *                   type: string
  *                 message:
  *                   type: string
- *       
+ *       500:
+ *         description: Failed to get post!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.get('/post/:id', verifyToken, getPostById);
 /**
@@ -683,7 +840,16 @@ routes.get('/post/:id', verifyToken, getPostById);
  *                 message:
  *                   type: string
  *       500:
- *         description: Failed to create post!
+ *         description: Failed to create new post!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
  */
 routes.post('/post', verifyToken, sessionData, createPost);
 /**
@@ -734,7 +900,7 @@ routes.post('/post', verifyToken, sessionData, createPost);
  *                 message:
  *                   type: string
  *       500:
- *         description: Failed update post!
+ *         description: Failed to update post!
  *         content:
  *           application/json:
  *             schema:
@@ -803,8 +969,179 @@ routes.delete('/post/:id', verifyToken, deletePost);
  *  name: Comment
  *  description: Comment api collections 
  */
+
+/**
+ * @swagger
+ * /comment:
+ *   post:
+ *     summary: Post comment!
+ *     tags: [Comment]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               comment:
+ *                 type: string
+ *                 example: Hello world!
+ *               postId:
+ *                 type: string
+ *                 example: 2bc15812-195c-4f55-b5cb-4c1a77f622f6
+ *             required:
+ *               - comment
+ *               - userId
+ *     responses:
+ *       201:
+ *         description: Comment has been sent!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Post is not found!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to sent comment!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
+ */
 routes.post('/comment', verifyToken, sessionData, createComment);
+/**
+ * @swagger
+ * /comment/{id}:
+ *   put:
+ *     summary: Update comment data
+ *     tags: [Comment]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Comment ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               comment:
+ *                 type: string
+ *             required:
+ *               - comment
+ *     responses:
+ *       200:
+ *         description: Comment has been updated!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Comment is not found!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to update comment!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
+ */
 routes.put('/comment/:id', verifyToken, updateComment);
+/** 
+ * @swagger
+ * /comment/{id}:
+ *   delete:
+ *     summary: Delete comment data
+ *     tags: [Comment]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Comment ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Comment has been deleted!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Comment is not found!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed delete comment!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
+ */
 routes.delete('/comment/:id', verifyToken, deleteComment);
 
 /** ROUTES FOR TEST */

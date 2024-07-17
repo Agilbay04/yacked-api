@@ -14,10 +14,10 @@ export const createComment = async (req, res) => {
     
         await createCommentData(newComment);
     
-        return successResponse(res, 200, "Comment has been sent!");
+        return successResponse(res, 201, "Comment has been sent!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to send comment!", error);
+        errorResponse(res, 500, "Failed to sent comment!", error);
 
     }
 };
