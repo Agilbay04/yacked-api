@@ -1,5 +1,5 @@
 import express from "express";
-import { deleteUser, getAllUsers, getUserById, testCheckSession, updateUser } from "../src/controllers/userController.js";
+import { deleteUser, getAllUsers, getUserById, testCheckSession, updateUser, uploadImageUser } from "../src/controllers/userController.js";
 import { sessionData, verifyToken } from "../src/helpers/authHelper.js";
 import { login, logout, register, token } from "../src/controllers/authController.js";
 import { createPost, deletePost, getOnePostByUserId, getPostById, getPostByUserId, updatePost } from "../src/controllers/postController.js";
@@ -511,6 +511,10 @@ routes.put('/user/:id', verifyToken, updateUser);
  *                   type: string
  */
 routes.delete('/user/:id', verifyToken, deleteUser);
+/**
+ * @swagger
+ */
+routes.post('/user/upload', verifyToken, uploadImageUser);
 
 /** POST ROUTES */
 /**
