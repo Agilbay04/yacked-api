@@ -1,6 +1,13 @@
 # Yacked App
 APIs for Yacked App (simple app like Twitter)
 
+# Tech Stack
+1. [Node.js](https://nodejs.org/en)
+2. [Express.js](https://expressjs.com/)
+3. [PostgreSQL](https://www.postgresql.org/)
+4. [Prisma ORM](https://www.prisma.io/)
+5. [Docker](https://www.docker.com/)
+
 # How To Install
 1. Clone this repository
 2. Run ``` npm install ```
