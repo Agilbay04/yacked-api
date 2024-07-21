@@ -1,5 +1,11 @@
-import { getPostDataByUserId, createPostData, getPostDataById, updatePostData, deletePostData } from "../services/postServices.js";
-import { successResponse, errorResponse } from "../helpers/responseHelper.js";
+import { successResponse, errorResponse } from "../../helpers/responseHelper.js";
+import { 
+    getPostDataByUserId, 
+    createPostData, 
+    getPostDataById, 
+    updatePostData, 
+    deletePostData 
+} from "../../services/postServices.js";
 
 export const getPostByUserId = async (req, res) => {
     try {

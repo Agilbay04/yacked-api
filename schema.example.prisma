@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
@@ -9,7 +12,7 @@ generator client {
 // ====== Datasource ======
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DB_URL")
 }
 
 // ====== User Model ======
@@ -23,10 +26,11 @@ model User {
   created_by  String    @db.VarChar(50)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_by  String    @db.VarChar(50)
-  deleted     Int       @db.SmallInt()
+  deleted     Int       @default(0) @db.SmallInt()
   token       Token[]   
   post        Post[]
   comment     Comment[]
+  avatar      Avatar[]
 }
 
 // ====== Token Model ======
@@ -45,7 +49,7 @@ model Post {
   post        String    @db.Text
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
-  deleted     Int       @db.SmallInt()
+  deleted     Int       @default(0) @db.SmallInt()
   user        User      @relation(fields: [user_id], references: [id])
   user_id     String    @db.VarChar(255)
   comment     Comment[]
@@ -57,9 +61,20 @@ model Comment {
   comment     String    @db.Text
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
-  deleted     Int       @db.SmallInt()
+  deleted     Int       @default(0) @db.SmallInt()
   post        Post      @relation(fields: [post_id], references: [id])
   post_id     String    @db.VarChar(255)
   user        User      @relation(fields: [user_id], references: [id])
   user_id     String    @db.VarChar(255)
+}
+
+// ====== Avatar Model ======
+model Avatar {
+  id         String     @id @default(uuid())
+  avatar_url String     @db.VarChar(255)
+  user_id    String     @db.VarChar(255)
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @default(now()) @db.Timestamp(6)
+  deleted    Int        @default(0) @db.SmallInt
+  user       User       @relation(fields: [user_id], references: [id])
 }

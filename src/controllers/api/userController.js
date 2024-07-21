@@ -1,6 +1,10 @@
-import { getUsersData, getUserDataById, updateUserData, deleteUserData } from "../services/userServices.js"
-import { errorResponse, successResponse } from "../helpers/responseHelper.js";
-import upload from "../helpers/uploadHelper.js";
+import { errorResponse, successResponse } from "../../helpers/responseHelper.js";
+import { 
+    getUsersData, 
+    getUserDataById, 
+    updateUserData, 
+    deleteUserData 
+} from "../../services/userServices.js"
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -66,22 +70,6 @@ export const deleteUser = async (req, res) => {
 
     } catch (error) {
         errorResponse(res, 500, "Failed delete user data!", error);;
-    }
-}
-
-export const uploadImageUser = async (req, res) => {
-    try {
-        const reqFile = req.file;
-        upload.single(reqFile.userImg);
-        upload(req, res, (err) => {
-            if (err) {
-                return errorResponse(res, 400, "Failed to upload image", err);
-            }
-
-            return successResponse(res, 201, "Success upload image!");
-        })
-    } catch(error) {
-        errorResponse(res, 500, "Failed to upload image!", error);
     }
 }
 

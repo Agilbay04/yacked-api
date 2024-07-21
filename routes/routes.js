@@ -1,10 +1,33 @@
 import express from "express";
-import { deleteUser, getAllUsers, getUserById, testCheckSession, updateUser, uploadImageUser } from "../src/controllers/userController.js";
+import { uploadAvatar } from "../src/controllers/api/uploadController.js";
 import { sessionData, verifyToken } from "../src/helpers/authHelper.js";
-import { login, logout, register, token } from "../src/controllers/authController.js";
-import { createPost, deletePost, getOnePostByUserId, getPostById, getPostByUserId, updatePost } from "../src/controllers/postController.js";
-import { createComment, deleteComment, updateComment } from "../src/controllers/commentController.js";
 import { loginValidation, registerValidation } from "../src/validation/authValidation.js";
+import { 
+    createComment, 
+    deleteComment, 
+    updateComment 
+} from "../src/controllers/api/commentController.js";
+import { 
+    login, 
+    logout, 
+    register, 
+    token 
+} from "../src/controllers/api/authController.js";
+import { 
+    deleteUser, 
+    getAllUsers, 
+    getUserById, 
+    testCheckSession, 
+    updateUser 
+} from "../src/controllers/api/userController.js";
+import { 
+    createPost, 
+    deletePost, 
+    getOnePostByUserId, 
+    getPostById, 
+    getPostByUserId, 
+    updatePost 
+} from "../src/controllers/api/postController.js";
 
 const routes = express.Router();
 
@@ -514,7 +537,7 @@ routes.delete('/user/:id', verifyToken, deleteUser);
 /**
  * @swagger
  */
-routes.post('/user/upload', verifyToken, uploadImageUser);
+routes.post('/upload', verifyToken, uploadAvatar);
 
 /** POST ROUTES */
 /**

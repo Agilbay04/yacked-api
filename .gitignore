@@ -1,6 +1,8 @@
 node_modules
 prisma
 test
+uploads/files/*
+uploads/images/*
 package-lock.json
 docker-compose.yml
 Dockerfile
