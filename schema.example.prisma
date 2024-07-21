@@ -31,6 +31,7 @@ model User {
   post        Post[]
   comment     Comment[]
   avatar      Avatar[]
+  like        Like[]
 }
 
 // ====== Token Model ======
@@ -39,8 +40,8 @@ model Token {
   token       String?   @db.Text
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
-  user        User      @relation(fields: [user_id], references: [id])
   user_id     String    @unique @db.VarChar(255)
+  user        User      @relation(fields: [user_id], references: [id])
 }
 
 // ====== Post Model ======
@@ -50,9 +51,10 @@ model Post {
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
   deleted     Int       @default(0) @db.SmallInt()
-  user        User      @relation(fields: [user_id], references: [id])
   user_id     String    @db.VarChar(255)
+  user        User      @relation(fields: [user_id], references: [id])
   comment     Comment[]
+  like        Like[]
 }
 
 // ====== Comment Model ======
@@ -62,10 +64,11 @@ model Comment {
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
   deleted     Int       @default(0) @db.SmallInt()
-  post        Post      @relation(fields: [post_id], references: [id])
   post_id     String    @db.VarChar(255)
-  user        User      @relation(fields: [user_id], references: [id])
   user_id     String    @db.VarChar(255)
+  post        Post      @relation(fields: [post_id], references: [id])
+  user        User      @relation(fields: [user_id], references: [id])
+  like        Like[]
 }
 
 // ====== Avatar Model ======
@@ -77,4 +80,19 @@ model Avatar {
   updated_at DateTime   @default(now()) @db.Timestamp(6)
   deleted    Int        @default(0) @db.SmallInt
   user       User       @relation(fields: [user_id], references: [id])
+}
+
+// ====== Like Model ======
+model Like {
+  id         String     @id @default(uuid())
+  like       Boolean    @default(false)
+  user_id    String     @db.VarChar(255)
+  post_id    String     @db.VarChar(255)
+  comment_id String     @db.VarChar(255)
+  created_at DateTime   @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @default(now()) @db.Timestamp(6)
+  deleted    Int        @default(0) @db.SmallInt
+  user       User       @relation(fields: [user_id], references: [id])
+  post       Post       @relation(fields: [post_id], references: [id])
+  comment    Comment    @relation(fields: [comment_id], references: [id])
 }
