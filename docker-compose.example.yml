@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: app_container
+    command: npm run dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+
+  postgres:
+    image: postgres:latest
+    container_name: db_container
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: db_username
+      POSTGRES_PASSWORD: db_password
+      POSTGRES_DB: db_name
+    volumes:
+      - my_db_data:/var/lib/postgresql/data
+
+volumes:
+  my_db_data:
