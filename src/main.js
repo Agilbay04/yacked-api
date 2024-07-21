@@ -5,7 +5,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser";
 import routes from "../routes/routes.js";
 // import swaggerUi from "swagger-ui-express";
-// import swaggerSpecs from "./swagger.js";
+// import swaggerSpecs from "../docs/swagger.js";
 
 const app = express();
 
