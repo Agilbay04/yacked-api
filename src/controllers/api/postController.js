@@ -1,11 +1,12 @@
 import { successResponse, errorResponse } from "../../helpers/responseHelper.js";
+import { likePostData, getLikeByUserAndPost, getLikeById, deleteLike } from "../../services/likeService.js";
 import { 
     getPostDataByUserId, 
     createPostData, 
     getPostDataById, 
     updatePostData, 
-    deletePostData 
-} from "../../services/postServices.js";
+    deletePostData
+} from "../../services/postService.js";
 
 export const getPostByUserId = async (req, res) => {
     try {
@@ -110,4 +111,50 @@ export const deletePost = async (req, res) => {
         errorResponse(res, 500, "Failed to delete post!", error);
 
     }
-}
+};
+
+export const likePost = async (req, res) => {
+    try {
+        const postId = req.params.post_id;
+
+        const post = await getPostDataById(postId);
+
+        if (!post) return errorResponse(res, 404, "Post is not foud!");
+
+        const likePost = {
+            like: true,
+            user_id: req.user.id,
+            post_id: post.id
+        };
+
+        const likeData = await getLikeByUserAndPost(likePost);
+        if (likeData) return successResponse(res, 200, "Post liked ❤️!");
+
+        const liked = await likePostData(likePost);
+        if (!liked) return errorResponse(res, 400, "Failed to like post!");
+
+        return successResponse(res, 200, "Post liked ❤️!");
+
+    } catch (error) {
+        errorResponse(res, 500, "Failed to like post!", error.message);
+
+    }
+};
+
+export const unlikePost = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const like = await getLikeById(id);
+        if (!like) return errorResponse(res, 404, "Like data not found!");
+
+        const unlike = await deleteLike(like.id);
+        if (!unlike) return errorResponse(res, 400, "Failed to unlike!");
+
+        return successResponse(res, 200, "Post unliked 💔!");
+        
+    } catch (error) {
+        return errorResponse(res, 500, 'Failed to unlike!');
+
+    }
+};

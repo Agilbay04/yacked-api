@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
-import { createUserData, getUserDataByUsername } from "../../services/userServices.js";
+import { createUserData, getUserDataByUsername } from "../../services/userService.js";
 import { successResponse, errorResponse } from "../../helpers/responseHelper.js";
 import { 
     getAccessToken, 
@@ -11,7 +11,7 @@ import {
     deleteUserTokenData, 
     getUserDataByToken, 
     updateUserToken 
-} from "../../services/authServices.js";
+} from "../../services/authService.js";
 
 export const login = async (req, res) => {
     try {

@@ -26,6 +26,8 @@ import {
     getOnePostByUserId, 
     getPostById, 
     getPostByUserId, 
+    likePost, 
+    unlikePost, 
     updatePost 
 } from "../src/controllers/api/postController.js";
 
@@ -988,6 +990,14 @@ routes.put('/post/:id', verifyToken, updatePost);
  *                   type: string
  */
 routes.delete('/post/:id', verifyToken, deletePost);
+/**
+ * @swagger
+ */
+routes.post('/post/like/:post_id', verifyToken, likePost);
+/**
+ * @swagger
+ */
+routes.post('/post/unlike/:id', verifyToken, unlikePost);
 
 /** COMMENT ROUTES */
 /**

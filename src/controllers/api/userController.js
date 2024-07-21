@@ -4,7 +4,7 @@ import {
     getUserDataById, 
     updateUserData, 
     deleteUserData 
-} from "../../services/userServices.js"
+} from "../../services/userService.js"
 
 export const getAllUsers = async (req, res) => {
     try {

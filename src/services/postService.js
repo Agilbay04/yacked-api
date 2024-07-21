@@ -28,6 +28,17 @@ export const getPostDataByUserId = async (userId) => {
                             select: { username: true }
                         }
                     }
+                },
+                like: {
+                    select: {
+                        id: true,
+                        created_at: true,
+                        updated_at: true,
+                        user_id: true,
+                        user: {
+                            select: { username: true }
+                        }
+                    }
                 }
             }
         });
@@ -75,6 +86,17 @@ export const getPostDataById = async (id) => {
                     select: {
                         id: true,
                         comment: true,
+                        created_at: true,
+                        updated_at: true,
+                        user_id: true,
+                        user: {
+                            select: { username: true }
+                        }
+                    }
+                },
+                like: {
+                    select: {
+                        id: true,
                         created_at: true,
                         updated_at: true,
                         user_id: true,

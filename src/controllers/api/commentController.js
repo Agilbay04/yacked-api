@@ -1,12 +1,12 @@
 import { successResponse,errorResponse } from "../../helpers/responseHelper.js";
-import { getPostDataById } from "../../services/postServices.js";
+import { getPostDataById } from "../../services/postService.js";
 import { 
     createCommentData, 
     getCommentDataByPostId, 
     getCommentDataById, 
     updateCommentData, 
     deleteCommentData 
-} from "../../services/commentServices.js";
+} from "../../services/commentService.js";
 
 export const createComment = async (req, res) => {
     try {
