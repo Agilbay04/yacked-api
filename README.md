@@ -1,4 +1,4 @@
-# Yacked App
+# Yacked App (On Development)
 APIs for Yacked App (simple app like Twitter)
 
 # Tech Stack
