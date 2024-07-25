@@ -16,8 +16,7 @@ import {
 import { 
     deleteUser, 
     getAllUsers, 
-    getUserById, 
-    testCheckSession, 
+    getUserById,
     updateUser 
 } from "../src/controllers/api/userController.js";
 import { 
@@ -423,7 +422,7 @@ routes.get('/users', verifyToken, getAllUsers);
  *                 message:
  *                   type: string
  */
-routes.get('/user/:id', verifyToken, getUserById);
+routes.get('/user/:id', getUserById);
 /**
  * @swagger
  * /user/{id}:
@@ -1180,8 +1179,5 @@ routes.put('/comment/:id', verifyToken, updateComment);
  *                   type: string
  */
 routes.delete('/comment/:id', verifyToken, deleteComment);
-
-/** ROUTES FOR TEST */
-routes.get('/', verifyToken, sessionData, testCheckSession);
 
 export default routes;

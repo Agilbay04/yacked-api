@@ -1,4 +1,4 @@
-import { successResponse,errorResponse } from "../../helpers/responseHelper.js";
+import { apiResponse,throwError } from "../../middlewares/apiResponse.js";
 import { getPostDataById } from "../../services/postService.js";
 import { 
     createCommentData, 
@@ -8,59 +8,58 @@ import {
     deleteCommentData 
 } from "../../services/commentService.js";
 
-export const createComment = async (req, res) => {
+export const createComment = async (req, res, next) => {
     try {
         const newComment = req.body;
-    
         newComment.userId = req.session.userId;
     
         const post = await getPostDataById(newComment.postId);
+        if (!post) throwError("Post is not found!", 404);
     
-        if (!post) return errorResponse(res, 404, "Post is not found!");
-    
-        await createCommentData(newComment);
-    
-        return successResponse(res, 201, "Comment has been sent!");
+        const created = await createCommentData(newComment);
+        if (!created) throwError("Failed to sent comment!", 400);
+
+        return apiResponse(res, 201, "Comment has been sent!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to sent comment!", error);
+        next(error);
 
     }
 };
 
-export const updateComment = async (req, res) => {
+export const updateComment = async (req, res, next) => {
     try {
         const id = req.params.id;
         const data = req.body;
 
         const comment = await getCommentDataById(id);
+        if (!comment) throwError("Comment is not found!", 404);
 
-        if (!comment) return errorResponse(res, 404, "Comment is not found!");
+        const updated = await updateCommentData(data, id);
+        if (!updated) throwError("Failed to update comment!", 400);
 
-        await updateCommentData(data, id);
-
-        return successResponse(res, 200, "Comment has been updated!");
+        return apiResponse(res, 200, "Comment has been updated!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to update comment!", error);
+        error(error);
 
     }
 };
 
-export const deleteComment = async (req, res) => {
+export const deleteComment = async (req, res, next) => {
     try {
         const id = req.params.id;
 
         const comment = await getCommentDataById(id);
+        if (!comment) throwError("Comment not found!", 404);
 
-        if (!comment) return errorResponse(res, 404, "Comment not found!");
+        const deleted = await deleteCommentData(id);
+        if (!deleted) throwError("Filed to delete comment!");
 
-        await deleteCommentData(id);
-
-        return successResponse(res, 200, "Comment has been deleted!");
+        return apiResponse(res, 200, "Comment has been deleted!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to delete comment!", error);
+        next(error);
 
     }
-}
+};

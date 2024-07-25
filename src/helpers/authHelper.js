@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { errorResponse } from "../helpers/responseHelper.js";
+import { errorResponse, throwError } from "../middlewares/apiResponse.js";
 
 export const hashPassword = async (password) => {
     try {
@@ -26,17 +26,18 @@ export const verifyToken = async (req, res, next) => {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
 
-        if(token == null) return errorResponse(res, 401, "Authentication failed!");
+        if(token == null) throwError("Authentication failed!", 401);
 
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if(err) return errorResponse(res, 403, "Token is expired!");
+            if(err) throwError("Token is expired!", 403);
 
             req.user = decoded;
             next();
         });
 
     } catch (error) {
-        errorResponse(res, 500, "Verify token is failed!", error);
+        next(error);
+
     }
 };
 
@@ -91,7 +92,7 @@ export const sessionData = (req, res, next) => {
         next();
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to save session!", error);
+        next(error);
 
     }
 };

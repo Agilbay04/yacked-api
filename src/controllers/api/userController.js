@@ -1,4 +1,4 @@
-import { errorResponse, successResponse } from "../../helpers/responseHelper.js";
+import { apiResponse, throwError } from "../../middlewares/apiResponse.js";
 import { 
     getUsersData, 
     getUserDataById, 
@@ -6,74 +6,66 @@ import {
     deleteUserData 
 } from "../../services/userService.js"
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
     try {
         const users = await getUsersData();
 
-        if (users.length === 0) return errorResponse(res, 404, "Users data is not found!");
+        if (users.length === 0) throwError("Users data is not found!", 404);
 
-        return successResponse(res, 200, "Success get users data!", users, users.length);
+        return apiResponse(res, 200, "Success get users data!", users);
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to get users data!");
+        next(error);
 
     }
 };
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
 
         const user = await getUserDataById(id);
+        if (!user) throwError("User data not found!", 404);
 
-        if (!user) return errorResponse(res, 404, "User data is not found!");
-
-        return successResponse(res, 200, "Success get user data!", user);
+        return apiResponse(res, 200, "Success get user data!", user);
     
     } catch (error) {
-        errorResponse(res, 500, "Failed to get user data!");
-
+        next(error);
     }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
     try {
         const id = req.params.id;
         const data = req.body;
 
-        const user = await getUserDataById(id);
+        const user = await getUserDataById(id); 
+        if (!user) throwError("Fail to update data, user data not found!", 404);
 
-        console.info(id);
-    
-        if (!user) return errorResponse(res, 404, "Fail to update data, user data not found!");
+        const updated = await updateUserData(data, id);
+        if (!updated) throwError("Failed to update data", 400);
 
-        await updateUserData(data, id);
-
-        return successResponse(res, 200, `Success update user data ${user.full_name}!`);
+        return apiResponse(res, 200, `Success update user data ${user.full_name}!`);
 
     } catch (error) {
-        errorResponse(res, 500, "Error update user data!", error);
+        next(error);
 
     }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const { id } = req.params;
+
         const user = await getUserDataById(id);
-        
-        if (!user) return errorResponse(res, 404, "Fail to delete data, user data not found!");
+        if (!user) throwError("Fail to delete data, user data not found!", 404);
 
-        await deleteUserData(id);
+        const deleted = await deleteUserData(id);
+        if (!deleted) throwError("Failed to delete data", 400);
 
-        return successResponse(res, 200, "Success delete user data!");
+        return apiResponse(res, 200, "Success delete user data!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed delete user data!", error);;
+        next(error);
     }
 }
-
-export const testCheckSession = (req, res) => {
-    const data = req.user;
-    res.send(data);
-};

@@ -1,29 +1,34 @@
-export const responseHandler = (req, res, next) => {
-    const originalSend = res.send;
+import { currentDate } from "../helpers/dateHelper.js";
 
-    res.send = (data) => {
-        const formattedResponse = {
-            success: true,
-            status: res.statusCode,
-            timestamp: new Date().toISOString(),
-            data: data,
-            totalRecord: data.length
-        };
-        originalSend.call(this, formattedResponse);
-    };
+export const apiResponse = (res, statusCode, message, data) => {
+    res.status(statusCode).json({
+        success: true,
+        status: statusCode,
+        timestamp: currentDate(),
+        message: message,
+        data: data,
+        totalRecord: Array.isArray(data) ? data.length : 0
+    });
+}; 
 
-    next();
+export const errorResponse = (res, statusCode, message, err) => {
+    res.status(statusCode).json({
+        success: false,
+        status: statusCode,
+        timestamp: currentDate(),
+        message: message,
+        error: err.stack
+    });
 };
 
 export const errorHandler = (err, req, res, next) => {
-    console.log("Middleware Error Hadnling");
-    const errStatus = err.statusCode || 500;
-    const errMsg = err.message || "Error invalid data!";
-    res.status(errStatus).json({
-        success: false,
-        status: errStatus,
-        message: errMsg,
-        timestamp: new Date().toISOString(),
-        stack: err.stack
-    });
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'An unexpected error occurred';
+    errorResponse(res, statusCode, message, err);
+};
+
+export const throwError = (message, statusCode) => {
+    const error = new Error(message);
+    error.statusCode = statusCode;
+    throw error;
 };

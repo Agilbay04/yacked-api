@@ -4,8 +4,10 @@ import moment from "moment-timezone";
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import routes from "../routes/routes.js";
+import { infoLog, errorLog } from "./middlewares/logging.js";
+import { errorHandler } from "./middlewares/apiResponse.js";
 // import swaggerUi from "swagger-ui-express";
-// import swaggerSpecs from "../docs/swagger.js";
+// import swaggerSpecs from "./docs/swagger.js";
 
 const app = express();
 
@@ -13,7 +15,10 @@ app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cookieParser());
 app.use(express.json());
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+app.use(infoLog);
 app.use(routes);
+app.use(errorLog);
+app.use(errorHandler);
 
 config();
 

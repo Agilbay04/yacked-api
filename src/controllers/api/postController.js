@@ -1,5 +1,9 @@
-import { successResponse, errorResponse } from "../../helpers/responseHelper.js";
-import { likePostData, getLikeByUserAndPost, getLikeById, deleteLike } from "../../services/likeService.js";
+import { apiResponse, errorResponse, throwError } from "../../middlewares/apiResponse.js";
+import { 
+    likePostData, 
+    getLikeByUserAndPost, 
+    getLikeById, 
+    deleteLike } from "../../services/likeService.js";
 import { 
     getPostDataByUserId, 
     createPostData, 
@@ -8,118 +12,113 @@ import {
     deletePostData
 } from "../../services/postService.js";
 
-export const getPostByUserId = async (req, res) => {
+export const getPostByUserId = async (req, res, next) => {
     try {
         const userId = req.params.user_id;
     
         const posts = await getPostDataByUserId(userId);
+        if (posts.length === 0) throwError("Posts is not found!", 404);
     
-        if (posts.length === 0) return errorResponse(res, 404, "Posts data not found!");
-    
-        return successResponse(res, 200, "Success get posts!", posts, posts.length);
+        return apiResponse(res, 200, "Success get posts!", posts);
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to get posts!", error.message);
+        next(error);
 
     }
 };
 
-export const getOnePostByUserId = async (req, res) => {
+export const getOnePostByUserId = async (req, res, next) => {
     try {
         const params = req.params;
 
         const posts = await getPostDataByUserId(params.user_id);
-
-        if (posts.length === 0) return errorResponse(res, 404, "Posts is not found!");
+        if (posts.length === 0) throwError("Posts is not found!", 404);
 
         const post = posts.find((data) => data.id == params.post_id);
+        if (!post) throwError("Post is not found!", 404);
 
-        if (!post) return errorResponse(res, 404, "Post is not found!");
-
-        return successResponse(res, 200, "Success get post!", post);
+        return apiResponse(res, 200, "Success get post!", post);
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to get post!", error);
+        next(error);
 
     }
 };
 
-export const getPostById = async (req, res) => {
+export const getPostById = async (req, res, next) => {
     try {
         const id = req.params.id;
 
         const post = await getPostDataById(id);
+        if (!post) throwError("Post data is not found!", 404);
 
-        if (!post) return errorResponse(res, 404, "Post data is not found!");
-
-        successResponse(res, 200, "Success get post!", post);
+        apiResponse(res, 200, "Success get post!", post);
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to get post!", error)
+        next(error)
 
     }
 };
 
-export const createPost = async (req, res) => {
+export const createPost = async (req, res, next) => {
     try {
         const newPost = req.body;
-
         newPost.userId = req.session.userId;
 
-        await createPostData(newPost);
+        const created = await createPostData(newPost);
+        if (!created) throwError("Failed to upload post!", 400);
 
-        successResponse(res, 201, "Success create new post!");
+        apiResponse(res, 201, "Post has been upload!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to create new post!", error);
+        next(error);
 
     }
 };
 
-export const updatePost = async (req, res) => {
+export const updatePost = async (req, res, next) => {
     try {
         const id = req.params.id;
         const data = req.body;
 
         const post = await getPostDataById(id);
+        if (!post) throwError("Post is not found!", 404);
 
-        if (!post) return errorResponse(res, 404, "Post data not found!, failed to update post");
+        const updated = await updatePostData(data, id);
+        if (!updated) throwError("Failed to update post!", 400)
 
-        await updatePostData(data, id);
-
-        return successResponse(res, 200, "Success update post!");
+        return apiResponse(res, 200, "Success update post!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to update post!", error);
+        next(error);
 
     }
 };
 
-export const deletePost = async (req, res) => {
+export const deletePost = async (req, res, next) => {
     try {
         const id = req.params.id;
 
         const post = await getPostDataById(id);
+        if (!post) throwError("Post is not found!", 404);
 
-        if (!post) return errorResponse(res, 404, "Post is not found!, failed to delete post!");
+        const deleted = await deletePostData(id);
+        if (!deleted) throwError("Failed to delete post!", 400);
 
-        await deletePostData(id);
-
-        return successResponse(res, 200, "Succes delete post!");
+        return apiResponse(res, 200, "Succes delete post!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to delete post!", error);
+        next(error);
 
     }
 };
 
-export const likePost = async (req, res) => {
+export const likePost = async (req, res, next) => {
     try {
         const postId = req.params.post_id;
 
         const post = await getPostDataById(postId);
-
-        if (!post) return errorResponse(res, 404, "Post is not foud!");
+        if (!post) throwError("Post is not foud!", 404);
 
         const likePost = {
             like: true,
@@ -128,33 +127,33 @@ export const likePost = async (req, res) => {
         };
 
         const likeData = await getLikeByUserAndPost(likePost);
-        if (likeData) return successResponse(res, 200, "Post liked ❤️!");
+        if (likeData) return apiResponse(res, 200, "Post liked ❤️!");
 
         const liked = await likePostData(likePost);
-        if (!liked) return errorResponse(res, 400, "Failed to like post!");
+        if (!liked) throwError("Failed to like post!", 400);
 
-        return successResponse(res, 200, "Post liked ❤️!");
+        return apiResponse(res, 200, "Post liked ❤️!");
 
     } catch (error) {
-        errorResponse(res, 500, "Failed to like post!", error.message);
+        next(error);
 
     }
 };
 
-export const unlikePost = async (req, res) => {
+export const unlikePost = async (req, res, next) => {
     try {
         const id = req.params.id;
 
         const like = await getLikeById(id);
-        if (!like) return errorResponse(res, 404, "Like data not found!");
+        if (!like) throwError("Like is not found!", 404);
 
         const unlike = await deleteLike(like.id);
-        if (!unlike) return errorResponse(res, 400, "Failed to unlike!");
+        if (!unlike) throwError("Failed to unlike!", 400);
 
-        return successResponse(res, 200, "Post unliked 💔!");
+        return apiResponse(res, 200, "Post unliked 💔!");
         
     } catch (error) {
-        return errorResponse(res, 500, 'Failed to unlike!');
+        next(error);
 
     }
 };

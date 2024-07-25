@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 import { createUserData, getUserDataByUsername } from "../../services/userService.js";
-import { successResponse, errorResponse } from "../../helpers/responseHelper.js";
+import { apiResponse, throwError } from "../../middlewares/apiResponse.js";
 import { 
     getAccessToken, 
     getRefreshToken, 
@@ -13,22 +13,21 @@ import {
     updateUserToken 
 } from "../../services/authService.js";
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const errors = validationResult(req);
+        const validationMsg = errors.array().map(x => x.msg).join(", ");
 
-        if (!errors.isEmpty()) return errorResponse(res, 400, "Validation error!", errors.array());
+        if (!errors.isEmpty()) throwError(`${validationMsg}`, 400);
 
         const { username, password } = req.body;
 
         const user = await getUserDataByUsername(username);
-
-        if (!user) return errorResponse(res, 400, "Wrong username or password!");
+        if (!user) throwError("Wrong username or password!", 400);
 
         const { id, email, username: uname } = user;
 
         const isPasswordMatch = await checkPassword(password, user.password);
-
         if (isPasswordMatch) {
             const accessToken = getAccessToken({
                 id: id,
@@ -58,66 +57,71 @@ export const login = async (req, res) => {
                 access_token: accessToken 
             };
 
-            successResponse(res, 200, `Login success! hello ${user.username}`, data);
+            apiResponse(res, 200, `Login success! hello ${user.username}`, data);
         } else {
-            errorResponse(res, 400, "Wrong username or password!");
+            throwError("Wrong username or password!", 400);
         }
         
     } catch (error) {
-        errorResponse(res, 500, "Login failed!", error);
+        next(error);
 
     }
 };
 
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-    
-        if (!refreshToken) return errorResponse(res, 204, "No content available!");
+        if (!refreshToken) throwError("No content available!", 204);
     
         const user = await getUserDataByToken(refreshToken);
-    
-        if (!user) return errorResponse(res, 404, "User data not found!");
+        if (!user) throwError("User data not found!", 404);
         
-        await deleteUserTokenData(user.user_id);
-    
+        const deleted = await deleteUserTokenData(user.user_id);
+        if (!deleted) throwError("Fail to logout!", 400);
+
         res.clearCookie('refreshToken');
     
-        return successResponse(res, 200, "Logout success!");
+        return apiResponse(res, 200, "Logout success!");
+
     } catch (error) {
-        errorResponse(res, 500, "Logout failed!", error);
+        next(error);
+
     }
 };
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
     try {
         const errors = validationResult(req);
+        const validationMsg = errors.array().map(x => x.msg).join(", ");
 
-        if (!errors.isEmpty()) return errorResponse(res, 400, "Validation error!", errors.array());
+        if (!errors.isEmpty()) throwError(`${validationMsg}`, 400);
 
         const newUser = req.body;
     
-        await createUserData(newUser);
-    
-        return successResponse(res, 201, "Registration account success!");
+        const created = await createUserData(newUser);
+        
+        if (!created) throwError("Registration account failed!", 400);
+
+        return apiResponse(res, 201, "Registration account success!");
 
     } catch (error) {
-        errorResponse(res, 500, "Registration user failed!", error.message);
+        next(error);
+    
     }
 };
 
-export const token = async (req, res) => {
+export const token = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
     
-        if (!refreshToken) return errorResponse(res, 401, "Authentication failed!");
+        if (!refreshToken) throwError("Authentication failed!", 401);
     
         const user = await getUserDataByToken(refreshToken);
     
-        if (!user) return errorResponse(res, 403, "Forbidden access!");
+        if (!user) throwError("Forbidden access!", 403);
         
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decode) => {
-            if (err) return errorResponse(res, 403, "Forbidden access!");
+            if (err) return throwError("Forbidden access!", 403);
             const { id, email, username } = user.user;
 
             const accessToken = getAccessToken({
@@ -133,9 +137,11 @@ export const token = async (req, res) => {
                 accessToken: accessToken 
             };
 
-            return successResponse(res, 200, "Success generate refresh token!", data); 
+            return apiResponse(res, 200, "Success generate refresh token!", data); 
         });
+
     } catch (error) {
-        errorResponse(res, 500, "Failed to generate refresh token!");
+        next(error);
+
     }
 };
