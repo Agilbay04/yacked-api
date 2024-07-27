@@ -5,6 +5,8 @@ import { loginValidation, registerValidation } from "../src/validation/authValid
 import { 
     createComment, 
     deleteComment, 
+    likeComment, 
+    unlikeComment, 
     updateComment 
 } from "../src/controllers/api/commentController.js";
 import { 
@@ -992,7 +994,7 @@ routes.delete('/post/:id', verifyToken, deletePost);
 /**
  * @swagger
  */
-routes.post('/post/like/:post_id', verifyToken, likePost);
+routes.post('/post/like/:postId', verifyToken, likePost);
 /**
  * @swagger
  */
@@ -1179,5 +1181,13 @@ routes.put('/comment/:id', verifyToken, updateComment);
  *                   type: string
  */
 routes.delete('/comment/:id', verifyToken, deleteComment);
+/**
+ * @swagger
+ */
+routes.post('/comment/like/:commentId', likeComment);
+/**
+ * @swagger
+ */
+routes.post('/comment/unlike/:id', verifyToken, unlikeComment);
 
 export default routes;

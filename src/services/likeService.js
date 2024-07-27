@@ -45,6 +45,50 @@ export const getLikeByUserAndPost = async (data) => {
     }
 };
 
+export const likeCommentData = async (likeComment) => {
+    try {
+        return await db.like.create({
+            data: {
+                like: likeComment.like,
+                user_id: likeComment.user_id,
+                post_id: likeComment.comment_id
+            }
+        });
+
+    } catch (error) {
+        new Error("Failed to liked post!");
+
+    }
+};
+
+export const getLikeByUserAndComment = async (data) => {
+    try {
+        return await db.like.findFirst({
+            where: {
+                AND: [
+                    {
+                        user_id: data.user_id
+                    },
+                    {
+                        comment_id: data.comment_id
+                    }
+                ]
+            },
+            select: {
+                id: true,
+                user_id: true,
+                comment_id: true,
+                created_at: true,
+                updated_at: true
+            }
+        });
+
+    } catch (error) {
+        new Error('Failed to get like data!');
+
+    }
+};
+
 export const getLikeById = async (id) => {
     try {
         return await db.like.findFirst({

@@ -115,7 +115,7 @@ export const deletePost = async (req, res, next) => {
 
 export const likePost = async (req, res, next) => {
     try {
-        const postId = req.params.post_id;
+        const { postId } = req.params;
 
         const post = await getPostDataById(postId);
         if (!post) throwError("Post is not foud!", 404);

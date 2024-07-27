@@ -8,7 +8,7 @@ export const getPostDataByUserId = async (userId) => {
             where: { user_id: userId, deleted: constants.DELETED_FALSE  },
             include: { 
                 user: true, 
-                comment: { include: { user: true } }, 
+                comment: { include: { user: true, like: true } }, 
                 like: { include: { user: true } } 
             }
         })).map(x => {
@@ -26,7 +26,8 @@ export const getPostDataByUserId = async (userId) => {
                         userId: x.user_id,
                         username: x.user.username,
                         createdAt: localDate(x.created_at),
-                        updatedAt: localDate(x.updated_at)
+                        updatedAt: localDate(x.updated_at),
+                        likeCount: x.like.length
                     };
                 }),
                 commentCount: x.comment.length,
@@ -71,7 +72,7 @@ export const getPostDataById = async (id) => {
             where: { id: id, deleted: constants.DELETED_FALSE },
             include: {
                 user: true,
-                comment: { include: { user: true } },
+                comment: { include: { user: true, like: true } },
                 like: { include: { user: true } }
             }
         });
@@ -90,7 +91,8 @@ export const getPostDataById = async (id) => {
                     userId: x.user_id,
                     username: x.user.username,
                     createdAt: localDate(x.created_at),
-                    updatedAt: localDate(x.updated_at)
+                    updatedAt: localDate(x.updated_at),
+                    likeCount: x.like.length
                 };
             }),
             commentCount: post.comment.length,
