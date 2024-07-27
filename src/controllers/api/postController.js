@@ -18,7 +18,7 @@ export const getPostByUserId = async (req, res, next) => {
     
         const posts = await getPostDataByUserId(userId);
         if (posts.length === 0) throwError("Posts is not found!", 404);
-    
+
         return apiResponse(res, 200, "Success get posts!", posts);
 
     } catch (error) {

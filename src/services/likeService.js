@@ -1,4 +1,5 @@
 import { db } from "../helpers/dbHelper.js";
+import constants from "../utils/constants.js";
 
 export const likePostData = async (likePost) => {
     try {
@@ -47,7 +48,7 @@ export const getLikeByUserAndPost = async (data) => {
 export const getLikeById = async (id) => {
     try {
         return await db.like.findFirst({
-            where: { id: id }, 
+            where: { id: id, deleted: constants.DELETED_FALSE }, 
             select: {
                 id: true,
                 user_id: true,

@@ -1,53 +1,51 @@
 import { db } from "../helpers/dbHelper.js";
-import { currentDate } from "../helpers/dateHelper.js";
+import { currentDate, localDate } from "../helpers/dateHelper.js";
+import constants from "../utils/constants.js";
 
 export const getPostDataByUserId = async (userId) => {
     try {
-        const posts =  await db.post.findMany({
-            where: {
-                user_id: userId,
-                deleted: 0
-            },
-            select: {
-                id: true,
-                post: true,
-                created_at: true,
-                updated_at: true,
-                user_id: true,
-                user: {
-                    select: { username: true },
-                },
-                comment: {
-                    select: {
-                        id: true,
-                        comment: true,
-                        created_at: true,
-                        updated_at: true,
-                        user_id: true,
-                        user: {
-                            select: { username: true }
-                        }
-                    }
-                },
-                like: {
-                    select: {
-                        id: true,
-                        created_at: true,
-                        updated_at: true,
-                        user_id: true,
-                        user: {
-                            select: { username: true }
-                        }
-                    }
-                }
+        return (await db.post.findMany({
+            where: { user_id: userId, deleted: constants.DELETED_FALSE  },
+            include: { 
+                user: true, 
+                comment: { include: { user: true } }, 
+                like: { include: { user: true } } 
             }
+        })).map(x => {
+            return {
+                id: x.id,
+                post: x.post,
+                userId: x.user_id,
+                username: x.user.username,
+                createdAt: localDate(x.created_at),
+                updatedAt: localDate(x.updated_at),
+                comments: x.comment.map(x => {
+                    return {
+                        id: x.id,
+                        comment: x.comment,
+                        userId: x.user_id,
+                        username: x.user.username,
+                        createdAt: localDate(x.created_at),
+                        updatedAt: localDate(x.updated_at)
+                    };
+                }),
+                commentCount: x.comment.length,
+                likes: x.like.map(x => {
+                    return {
+                        id: x.id,
+                        userId: x.user_id,
+                        username: x.user.username,
+                        createdAt: localDate(x.created_at),
+                        updatedAt: localDate(x.updated_at)
+                    };
+                }),
+                likeCount: x.like.length
+            };
         });
-
-        return posts;
-
 
     } catch (error) {
         console.error("Failed to get post data!", error);
+
     }
 };
 
@@ -69,44 +67,44 @@ export const createPostData = async (newPost) => {
 
 export const getPostDataById = async (id) => {
     try {
-        return await db.post.findFirst({
-            where: {
-                id: id
-            },
-            select: {
-                id: true,
-                post: true,
-                created_at: true,
-                updated_at: true,
-                user_id: true,
-                user: {
-                    select: { username: true }
-                },
-                comment: {
-                    select: {
-                        id: true,
-                        comment: true,
-                        created_at: true,
-                        updated_at: true,
-                        user_id: true,
-                        user: {
-                            select: { username: true }
-                        }
-                    }
-                },
-                like: {
-                    select: {
-                        id: true,
-                        created_at: true,
-                        updated_at: true,
-                        user_id: true,
-                        user: {
-                            select: { username: true }
-                        }
-                    }
-                }
+        let post = await db.post.findFirst({
+            where: { id: id, deleted: constants.DELETED_FALSE },
+            include: {
+                user: true,
+                comment: { include: { user: true } },
+                like: { include: { user: true } }
             }
         });
+
+        return post = {
+            id: post.id,
+            post: post.post,
+            userId: post.user_id,
+            username: post.user.username,
+            createdAt: localDate(post.created_at),
+            updatedAt: localDate(post.updated_at),
+            comments: post.comment.map(x => {
+                return {
+                    id: x.id,
+                    comment: x.comment,
+                    userId: x.user_id,
+                    username: x.user.username,
+                    createdAt: localDate(x.created_at),
+                    updatedAt: localDate(x.updated_at)
+                };
+            }),
+            commentCount: post.comment.length,
+            likes: post.like.map(x => {
+                return {
+                    id: x.id,
+                    userId: x.user_id,
+                    username: x.user.username,
+                    createdAt: localDate(x.created_at),
+                    updatedAt: localDate(x.updated_at)
+                };
+            }),
+            likeCount: post.like.length,
+        };
 
     } catch (error) {
         console.error("Failed to get post data!", error);

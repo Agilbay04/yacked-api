@@ -1,5 +1,6 @@
 import  { db } from "../helpers/dbHelper.js";
-import { currentDate } from "../helpers/dateHelper.js";
+import { currentDate, localDate } from "../helpers/dateHelper.js";
+import constants from "../utils/constants.js";
 
 export const createCommentData = async (data) => {
     try {
@@ -8,7 +9,7 @@ export const createCommentData = async (data) => {
                 comment: data.comment,
                 post_id: data.postId,
                 user_id: data.userId,
-                deleted: 0
+                deleted: constants.DELETED_FALSE
             }
         });
 
@@ -20,21 +21,21 @@ export const createCommentData = async (data) => {
 
 export const getCommentDataByPostId = async (id) => {
     try {
-        return await db.comment.findMany({
-            where: {
-                post_id: id
-            },
-            select: {
-                id: true,
-                comment: true,
-                created_at: true,
-                updated_at: true,
-                user_id: true,
-                user: {
-                    select: { username: true }
-                }
-            }
+        let comments = (await db.comment.findMany({
+            where: { post_id: id, deleted: constants.DELETED_FALSE },
+            include: { user: true }
+        })).map(x => {
+            return {
+                id: x.id,
+                comment: x.comment,
+                userId: x.user_id,
+                username: x.user.username,
+                createdAt: localDate(x.created_at),
+                updatedAt: localDate(x.updated_at)
+            };
         });
+
+        return comments;
 
     } catch (error) {
         console.error("Failed to get comments!", error);
@@ -44,21 +45,19 @@ export const getCommentDataByPostId = async (id) => {
 
 export const getCommentDataById = async (id) => {
     try {
-        return await db.comment.findFirst({
-            where: {
-                id: id
-            },
-            select: {
-                id: true,
-                comment: true,
-                created_at: true,
-                updated_at: true,
-                user_id: true,
-                user: {
-                    select: { username: true }
-                }
-            }
-        })
+        let comment = await db.comment.findFirst({
+            where: { id: id, deleted: constants.DELETED_FALSE },
+            include: { user: true }
+        });
+
+        return comment = {
+            id: comment.id,
+            comment: comment.comment,
+            userId: comment.user_id,
+            username: comment.user.username,
+            createdAt: localDate(comment.created_at),
+            updatedAt: localDate(comment.updated_at)
+        };
 
     } catch (error) {
         console.error("Failed to get comment!");

@@ -1,17 +1,21 @@
 import { hashPassword } from "../helpers/authHelper.js";
 import { db } from "../helpers/dbHelper.js";
+import constants from "../utils/constants.js";
+import { currentDate, localDate } from "../helpers/dateHelper.js";
 
 export const getUsersData = async () => {
     try {
-        const users = await db.user.findMany({
-            select: {
-                id: true,
-                full_name: true,
-                email: true,
-                username: true,
-                created_at: true,
-                updated_at: true
-            }
+        const users = (await db.user.findMany({
+            where: { deleted: constants.DELETED_FALSE }
+        })).map(x => {
+            return {
+                id: x.id,
+                fullName: x.full_name,
+                email: x.email,
+                username: x.username,
+                cretedAt: localDate(x.created_at),
+                updatedAt: localDate(x.updated_at)
+            };
         });
 
         return users
@@ -24,21 +28,18 @@ export const getUsersData = async () => {
 
 export const getUserDataById = async (id) => {
     try {
-        const user = await db.user.findFirst({
-            where: {
-                id: id
-            },
-            select: {
-                id: true,
-                full_name: true,
-                email: true,
-                username: true,
-                created_at: true,
-                updated_at: true
-            }
-        });
-    
-        return user
+        let user = (await db.user.findFirst({
+            where: { id: id, deleted: constants.DELETED_FALSE }
+        }));
+
+        return user = {
+            id: user.id,
+            fullName: user.full_name,
+            email: user.email,
+            username: user.username,
+            createdAt: localDate(user.created_at),
+            updatedAt: localDate(user.updated_at),
+        };
 
     } catch (error) {
         console.error("Failed to get user data!", error);
@@ -48,12 +49,10 @@ export const getUserDataById = async (id) => {
 
 export const updateUserData = async (data, id) => {
     try {
-        const currentDate = new Date().toJSON();
-        
         return await db.user.update({
             data: {
                 full_name: data.full_name,
-                updated_at: currentDate,
+                updated_at: currentDate(),
                 updated_by: data.updated_by
             },
             where: {
