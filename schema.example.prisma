@@ -85,7 +85,7 @@ model Avatar {
 // ====== Like Model ======
 model Like {
   id         String     @id @default(uuid())
-  like       Boolean    @default(false)
+  like       Boolean?   @db.Boolean
   user_id    String     @db.VarChar(255)
   post_id    String?    @db.VarChar(255)
   comment_id String?    @db.VarChar(255)
