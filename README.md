@@ -20,4 +20,4 @@ APIs for Yacked App (simple app like Twitter)
 9. Run ``` npx prisma init ``` to initiate prisma orm
 10. Copy inside ``` scheme.example.prisma ``` file into ``` ./prisma/scheme.prisma ```
 11. Run ``` npx prisma db push ``` to push model into database
-12. Run ``` npx prisma migrate dev ``` to migrate database
+12. Run ``` npx prisma migrate dev ``` to migrate database.
