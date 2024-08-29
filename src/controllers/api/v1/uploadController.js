@@ -1,18 +1,19 @@
-import { apiResponse, throwError } from "../../middlewares/apiResponse.js";
-import { uploadConfig, deleteFile } from "../../helpers/fileHelper.js";
+import ResponseError from "../../../exception/responseError.js";
+import { apiResponse } from "../../../middlewares/apiResponse.middleware.js";
+import { uploadConfig, deleteFile } from "../../../helpers/fileHelper.js";
 import { 
     deleteAvatarUser, 
     getAvatarUser, 
     updateAvatarUser, 
     uploadAvatarUser 
-} from "../../services/fileService.js";
+} from "../../../services/fileService.js";
 
 const upload = uploadConfig.single('avatar');
 
 export const uploadAvatar = async (req, res, next) => {
     upload(req, res, async err => {
         if (err) {
-            return throwError(err.message, 400);
+            return new ResponseError(err.message, 400);
         }
 
         try {
@@ -20,7 +21,7 @@ export const uploadAvatar = async (req, res, next) => {
             const user = req.user;
 
             const file = request.file;
-            if (!file) throwError("No file uploaded!", 400);
+            if (!file) throw new ResponseError("No file uploaded!", 400);
             
             const getAvatar = await getAvatarUser(user.id);
             if(getAvatar) {
@@ -41,7 +42,7 @@ export const uploadAvatar = async (req, res, next) => {
                 if(!uploadAvatar) {
                     await deleteFile(file.path);
     
-                    return throwError('Failed to upload avatar!', 400);
+                    return new ResponseError('Failed to upload avatar!', 400);
                 }
             }
             

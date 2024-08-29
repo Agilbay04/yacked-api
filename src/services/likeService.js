@@ -12,8 +12,8 @@ export const likePostData = async (likePost) => {
         });
 
     } catch (error) {
-        new Error("Failed to liked post!");
-
+        console.error("Failed to liked post!", error);
+        throw error;
     }
 };
 
@@ -40,8 +40,8 @@ export const getLikeByUserAndPost = async (data) => {
         });
 
     } catch (error) {
-        new Error('Failed to get like data!');
-
+        console.error("Failed to get like data!", error);
+        throw error;
     }
 };
 
@@ -51,13 +51,13 @@ export const likeCommentData = async (likeComment) => {
             data: {
                 like: likeComment.like,
                 user_id: likeComment.user_id,
-                post_id: likeComment.comment_id
+                comment_id: likeComment.comment_id
             }
         });
 
     } catch (error) {
-        new Error("Failed to liked post!");
-
+        console.error("Failed to liked comment!", error);
+        throw error;
     }
 };
 
@@ -84,8 +84,8 @@ export const getLikeByUserAndComment = async (data) => {
         });
 
     } catch (error) {
-        new Error('Failed to get like data!');
-
+        console.error("Failed to get like data!", error);
+        throw error;
     }
 };
 
@@ -97,14 +97,15 @@ export const getLikeById = async (id) => {
                 id: true,
                 user_id: true,
                 post_id: true,
+                comment_id: true,
                 created_at: true,
                 updated_at: true
             }
         });
 
     } catch (error) {
-        new Error("Failed to get like data!");
-
+        console.error("Failed to get like data!", error);
+        throw error;
     }
 };
 
@@ -115,7 +116,7 @@ export const deleteLike = async (id) => {
         });
 
     } catch (error) {
-        new Error("Failed to delete like!");
-
+        console.error("Failed to delete like!", error);
+        throw error;
     }
 }

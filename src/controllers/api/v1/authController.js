@@ -1,29 +1,28 @@
 import jwt from "jsonwebtoken";
+import ResponseError from "../../../exception/responseError.js";
 import { validationResult } from "express-validator";
-import { createUserData, getUserDataByUsername } from "../../services/userService.js";
-import { apiResponse, throwError } from "../../middlewares/apiResponse.js";
+import { createUserData, getUserDataByUsername } from "../../../services/userService.js";
+import { apiResponse } from "../../../middlewares/apiResponse.middleware.js";
 import { 
     getAccessToken, 
     getRefreshToken, 
     checkPassword 
-} from "../../helpers/authHelper.js";
+} from "../../../helpers/authHelper.js";
 import { 
     deleteUserTokenData, 
     getUserDataByToken, 
     updateUserToken 
-} from "../../services/authService.js";
+} from "../../../services/authService.js";
 
 export const login = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-        const validationMsg = errors.array().map(x => x.msg).join(", ");
-
-        if (!errors.isEmpty()) throwError(`${validationMsg}`, 400);
-
+        if (!errors.isEmpty()) return next(errors);
+        
         const { username, password } = req.body;
 
         const user = await getUserDataByUsername(username);
-        if (!user) throwError("Wrong username or password!", 400);
+        if (!user) throw new ResponseError("Wrong username or password!", 400);
 
         const { id, email, username: uname } = user;
 
@@ -59,7 +58,7 @@ export const login = async (req, res, next) => {
 
             apiResponse(res, 200, `Login success! hello ${user.username}`, data);
         } else {
-            throwError("Wrong username or password!", 400);
+            throw new ResponseError("Wrong username or password!", 400);
         }
         
     } catch (error) {
@@ -92,15 +91,11 @@ export const logout = async (req, res, next) => {
 export const register = async (req, res, next) => {
     try {
         const errors = validationResult(req);
-        const validationMsg = errors.array().map(x => x.msg).join(", ");
-
-        if (!errors.isEmpty()) throwError(`${validationMsg}`, 400);
+        if (!errors.isEmpty()) return next(errors);
 
         const newUser = req.body;
     
-        const created = await createUserData(newUser);
-        
-        if (!created) throwError("Registration account failed!", 400);
+        await createUserData(newUser);
 
         return apiResponse(res, 201, "Registration account success!");
 
@@ -113,12 +108,10 @@ export const register = async (req, res, next) => {
 export const token = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-    
-        if (!refreshToken) throwError("Authentication failed!", 401);
+        if (!refreshToken) throw new ResponseError("Authentication failed!", 401);
     
         const user = await getUserDataByToken(refreshToken);
-    
-        if (!user) throwError("Forbidden access!", 403);
+        if (!user) throw new ResponseError("Forbidden access!", 403);
         
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decode) => {
             if (err) return throwError("Forbidden access!", 403);

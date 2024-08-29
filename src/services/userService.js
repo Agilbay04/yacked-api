@@ -22,7 +22,7 @@ export const getUsersData = async () => {
 
     } catch (error) {
         console.error("Failed get users data!", error);
-    
+        throw error;
     }
 };
 
@@ -43,7 +43,7 @@ export const getUserDataById = async (id) => {
 
     } catch (error) {
         console.error("Failed to get user data!", error);
-
+        throw error;
     }
 };
 
@@ -61,7 +61,8 @@ export const updateUserData = async (data, id) => {
         });
         
     } catch (error) {
-        console.error("Failed to update user data!", error)
+        console.error("Failed to update user data!", error);
+        throw error;
     }
 };
 
@@ -75,7 +76,7 @@ export const deleteUserData = async (id) => {
 
     } catch (error) {
         console.error("Failed to delete user data!", error);
-
+        throw error;
     }
 };
 
@@ -91,6 +92,7 @@ export const getUserDataByUsername = async (username) => {
         
     } catch (error) {
         console.error("Failed to get user data!", error);
+        throw error;
     }
 };
 
@@ -110,6 +112,6 @@ export const createUserData = async (newUser) => {
 
     } catch (error) {
         console.error("Failed to create user data!", error);
-
+        throw error;
     }
 }

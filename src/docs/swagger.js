@@ -2,13 +2,15 @@ import swaggerJSDoc from "swagger-jsdoc";
 
 const swaggerOptions = {
     definition: {
-        openapi: '3.0.0',
+        openapi: '3.1.0',
         info: {
-            title: 'Yacked App [api docs]',
-            description: 'Author: AgilE',
+            title: 'Yacked App',
+            description: 'This is simple api for yacked app, application for sharing post and comment',
             version: '1.0.0',
             contact: {
-                email: 'johndoe@gmail.com'    
+                name: 'AgilE',
+                email: 'bayuagil04@gmail.com',
+                url: 'https://agilbay04.github.io/my-portfolio-website/'    
             }
         },
         components: {
@@ -23,8 +25,11 @@ const swaggerOptions = {
         security: [{
             bearerAuth: []
         }],
+        servers: [{
+            url: 'http://localhost:3000',
+        }],
     },
-    apis: ['./routes/*.js'],
+    apis: ['../routes/*.js'],
 };
 
 const swaggerSpecs = swaggerJSDoc(swaggerOptions);

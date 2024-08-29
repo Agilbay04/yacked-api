@@ -1,16 +1,15 @@
-import { apiResponse, throwError } from "../../middlewares/apiResponse.js";
+import ResponseError from "../../../exception/responseError.js";
+import { apiResponse } from "../../../middlewares/apiResponse.middleware.js";
 import { 
     getUsersData, 
     getUserDataById, 
     updateUserData, 
     deleteUserData 
-} from "../../services/userService.js"
+} from "../../../services/userService.js"
 
 export const getAllUsers = async (req, res, next) => {
     try {
         const users = await getUsersData();
-
-        if (users.length === 0) throwError("Users data is not found!", 404);
 
         return apiResponse(res, 200, "Success get users data!", users);
 
@@ -25,7 +24,8 @@ export const getUserById = async (req, res, next) => {
         const { id } = req.params;
 
         const user = await getUserDataById(id);
-        if (!user) throwError("User data not found!", 404);
+        console.log(user);
+        if (!user) throw new ResponseError("User data not found!", 404);
 
         return apiResponse(res, 200, "Success get user data!", user);
     
@@ -40,10 +40,10 @@ export const updateUser = async (req, res, next) => {
         const data = req.body;
 
         const user = await getUserDataById(id); 
-        if (!user) throwError("Fail to update data, user data not found!", 404);
+        if (!user) throw new ResponseError("Fail to update data, user data not found!", 404);
 
         const updated = await updateUserData(data, id);
-        if (!updated) throwError("Failed to update data", 400);
+        if (!updated) throw new ResponseError("Failed to update data", 400);
 
         return apiResponse(res, 200, `Success update user data ${user.full_name}!`);
 
@@ -58,10 +58,10 @@ export const deleteUser = async (req, res, next) => {
         const { id } = req.params;
 
         const user = await getUserDataById(id);
-        if (!user) throwError("Fail to delete data, user data not found!", 404);
+        if (!user) throw new ResponseError("Fail to delete data, user data not found!", 404);
 
         const deleted = await deleteUserData(id);
-        if (!deleted) throwError("Failed to delete data", 400);
+        if (!deleted) throw new ResponseError("Failed to delete data", 400);
 
         return apiResponse(res, 200, "Success delete user data!");
 

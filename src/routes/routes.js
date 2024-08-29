@@ -1,26 +1,26 @@
 import express from "express";
-import { uploadAvatar } from "../src/controllers/api/uploadController.js";
-import { sessionData, verifyToken } from "../src/helpers/authHelper.js";
-import { loginValidation, registerValidation } from "../src/validation/authValidation.js";
+import { uploadAvatar } from "../controllers/api/v1/uploadController.js";
+import { sessionData, verifyToken } from "../helpers/authHelper.js";
+import { loginValidation, registerValidation } from "../validation/authValidation.js";
 import { 
     createComment, 
     deleteComment, 
     likeComment, 
     unlikeComment, 
     updateComment 
-} from "../src/controllers/api/commentController.js";
+} from "../controllers/api/v1/commentController.js";
 import { 
     login, 
     logout, 
     register, 
     token 
-} from "../src/controllers/api/authController.js";
+} from "../controllers/api/v1/authController.js";
 import { 
     deleteUser, 
     getAllUsers, 
     getUserById,
     updateUser 
-} from "../src/controllers/api/userController.js";
+} from "../controllers/api/v1/userController.js";
 import { 
     createPost, 
     deletePost, 
@@ -30,7 +30,7 @@ import {
     likePost, 
     unlikePost, 
     updatePost 
-} from "../src/controllers/api/postController.js";
+} from "../controllers/api/v1/postController.js";
 
 const routes = express.Router();
 

@@ -20,7 +20,7 @@ export const updateUserToken = async (id, refreshToken) => {
 
     } catch (error) {
         console.error("Failed to udate user token!", error);
-
+        throw error;
     }
 };
 
@@ -39,7 +39,7 @@ export const getUserDataByToken = async (refreshToken) => {
 
     } catch (error) {
         console.error("Failed to get user data!", error);
-
+        throw error;
     }
 };
 
@@ -56,6 +56,6 @@ export const deleteUserTokenData = async (id) => {
 
     } catch (error) {
         console.error("Failed to delete user token!", error);
-    
+        throw error;
     }
 };

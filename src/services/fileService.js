@@ -10,7 +10,8 @@ export const uploadAvatarUser = async (newAvatar) => {
             }
         });
     } catch (error) {
-        new Error('Failed to upload avatar!', error);
+        console.error("Failed to upload avatar!", error);
+        throw error;
     }
 }
 
@@ -28,7 +29,8 @@ export const getAvatarUser = async (userId) => {
             }
         });
     } catch (error) {
-        new Error('Failed to get avatar user!');
+        console.error("Failed to get avatar user!", error);
+        throw error;
     }
 };
 
@@ -43,7 +45,8 @@ export const updateAvatarUser = async (avatar) => {
             }
         })
     } catch (error) {
-        new Error('Failed to update avatar!', error);
+        console.error("Failed to update avatar user!", error);
+        throw error;
     }
 };
 
@@ -53,6 +56,7 @@ export const deleteAvatarUser = async (avatar_id) => {
             where: { id: avatar_id }
         });
     } catch (error) {
-        new Error('Failed to delete avatar!', error)
+        console.error("Failed to delete avatar user!", error);
+        throw error;
     }
 }

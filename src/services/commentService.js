@@ -15,7 +15,7 @@ export const createCommentData = async (data) => {
 
     } catch (error) {
         console.error("Failed to create comment!", error);
-
+        throw error;
     }
 };
 
@@ -39,7 +39,7 @@ export const getCommentDataByPostId = async (id) => {
 
     } catch (error) {
         console.error("Failed to get comments!", error);
-
+        throw error;
     }
 };
 
@@ -61,7 +61,7 @@ export const getCommentDataById = async (id) => {
 
     } catch (error) {
         console.error("Failed to get comment!");
-
+        throw error;
     }
 };
 
@@ -79,7 +79,7 @@ export const updateCommentData = async (data, id) => {
 
     } catch (error) {
         console.error("Failed to update comment!", error);
-
+        throw error;
     }
 };
 
@@ -93,6 +93,6 @@ export const deleteCommentData = async (id) => {
 
     } catch (error) {
         console.error("Failed to delete comment!", error);
-    
+        throw error;
     }
 };

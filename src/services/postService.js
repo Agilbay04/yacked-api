@@ -46,7 +46,7 @@ export const getPostDataByUserId = async (userId) => {
 
     } catch (error) {
         console.error("Failed to get post data!", error);
-
+        throw error;
     }
 };
 
@@ -62,7 +62,7 @@ export const createPostData = async (newPost) => {
 
     } catch (error) {
         console.error("Failed to create new post!", error);
-
+        throw error;
     }
 };
 
@@ -110,6 +110,7 @@ export const getPostDataById = async (id) => {
 
     } catch (error) {
         console.error("Failed to get post data!", error);
+        throw error;
     }
 };
 
@@ -127,7 +128,7 @@ export const updatePostData = async (data, id) => {
 
     } catch (error) {
         console.error("Failed to update post!", error);
-
+        throw error;
     }
 };
 
@@ -141,6 +142,6 @@ export const deletePostData = async (id) => {
 
     } catch (error) {
         console.error("Failed to delete post!", error);
-
+        throw error;
     }
 };

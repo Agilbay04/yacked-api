@@ -1,23 +1,23 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { errorResponse, throwError } from "../middlewares/apiResponse.js";
+import ResponseError from "../exception/responseError.js";
 
-export const hashPassword = async (password) => {
+export const hashPassword = async (password, next) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
         return hash;
     } catch (error) {
-        errorResponse(res, 500, "Hashing password failed", error);
+        next(error);
     }
 }
 
-export const checkPassword = async (inputPassword, hashPassword) => {
+export const checkPassword = async (inputPassword, hashPassword, next) => {
     try {
         const isMatch = await bcrypt.compare(inputPassword, hashPassword);
         return isMatch;
     } catch (error) {
-        errorResponse(res, 500, "Error check password!", error);
+        next(error);
     }
 }
 
@@ -26,10 +26,10 @@ export const verifyToken = async (req, res, next) => {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
 
-        if(token == null) throwError("Authentication failed!", 401);
+        if(token == null) throw new ResponseError("Authentication failed!", 401);
 
         jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if(err) throwError("Token is expired!", 403);
+            if(err) throw new ResponseError("Token is expired!", 403);
 
             req.user = decoded;
             next();
@@ -41,7 +41,7 @@ export const verifyToken = async (req, res, next) => {
     }
 };
 
-export const getAccessToken = (user) => {
+export const getAccessToken = (user, next) => {
     try {
         const id = user.id;
         const email = user.email;
@@ -57,11 +57,11 @@ export const getAccessToken = (user) => {
             { expiresIn: expiredToken }
         );
     } catch (error) {
-        errorResponse(res, 500, "Get access token failed!", error);
+        next(error);
     }
 };
 
-export const getRefreshToken = (user) => {
+export const getRefreshToken = (user, next) => {
     try {
         const id = user.id;
         const email = user.email;
@@ -76,7 +76,7 @@ export const getRefreshToken = (user) => {
         );
 
     } catch (error) {
-        errorResponse(res, 500, "Get refresh token is failed!", error);
+        next(error);
 
     }
 };
