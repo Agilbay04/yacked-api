@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import ResponseError from "../exception/responseError.js";
+import crypto from "crypto";
 
 export const hashPassword = async (password, next) => {
     try {
@@ -96,3 +97,25 @@ export const sessionData = (req, res, next) => {
 
     }
 };
+
+export const generateKey = () => {
+    return Buffer.from(process.env.RESPONSE_SECRET_KEY);
+}
+
+export const encryptData = (data) => {
+    const stringData = typeof data === 'object' ? JSON.stringify(data) : data;
+    const cipher = crypto.createCipheriv('aes-256-ecb', generateKey(), null);
+    cipher.setAutoPadding(true);
+    let encrypted = cipher.update(stringData, 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+    return encrypted;
+}
+
+export const decryptData = (data) => {
+    const decipher = crypto.createDecipheriv('aes-256-ecb', generateKey(), null);
+    decipher.setAutoPadding(true);
+    let decrypted = decipher.update(data, 'base64', 'utf8');
+    decrypted += decipher.final('utf8');
+    const jsonData = JSON.parse(decrypted);
+    return jsonData;
+}

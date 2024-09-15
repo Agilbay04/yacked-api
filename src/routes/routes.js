@@ -2,6 +2,7 @@ import express from "express";
 import { uploadAvatar } from "../controllers/api/v1/uploadController.js";
 import { sessionData, verifyToken } from "../helpers/authHelper.js";
 import { loginValidation, registerValidation } from "../validation/authValidation.js";
+import { genBase64Key } from "../controllers/api/v1/testController.js";
 import { 
     createComment, 
     deleteComment, 
@@ -1189,5 +1190,65 @@ routes.post('/comment/like/:commentId', likeComment);
  * @swagger
  */
 routes.post('/comment/unlike/:id', verifyToken, unlikeComment);
+
+/** TEST ROUTES */
+/**
+ * @swagger
+ * tags:
+ *  name: Test
+ *  description: Test api collections
+ */
+
+/**
+ * @swagger
+ * /:id:
+ *   get:
+ *     summary: Get test data
+ *     tags: [Test]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Test ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Get test data success!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Test is not found!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to get test data!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: string
+ */
+routes.get('/test', genBase64Key);
 
 export default routes;

@@ -1,5 +1,7 @@
 import ResponseError from "../../../exception/responseError.js";
 import { apiResponse } from "../../../middlewares/apiResponse.middleware.js";
+import { apiResponseV2 } from "../../../middlewares/apiResponseV2.middleware.js";
+import { decryptData, encryptData } from "../../../helpers/authHelper.js";
 import { 
     likePostData, 
     getLikeByUserAndPost, 
@@ -19,7 +21,17 @@ export const getPostByUserId = async (req, res, next) => {
     
         const posts = await getPostDataByUserId(userId);
 
-        return apiResponse(res, 200, "Success get posts!", posts);
+        const jsonData = apiResponseV2(200, "Success get posts!", posts);
+        const responseEncrypt = encryptData(jsonData);
+        const responseDecrypt = decryptData(responseEncrypt);
+    
+        // return res.status(jsonData.statusCode).send({ 
+        //     response: responseEncrypt 
+        // });
+
+        return res.status(jsonData.statusCode).send({ 
+            response: responseDecrypt 
+        });
 
     } catch (error) {
         next(error);
@@ -37,7 +49,17 @@ export const getOnePostByUserId = async (req, res, next) => {
         const post = posts.find((data) => data.id == params.post_id);
         if (!post) throw new ResponseError("Post is not found!", 404);
 
-        return apiResponse(res, 200, "Success get post!", post);
+        const jsonData = apiResponseV2(200, "Success get post!", post);
+        const responseEncrypt = encryptData(jsonData);
+        const responseDecrypt = decryptData(responseEncrypt);
+
+        // return res.status(jsonData.statusCode).send({ 
+        //     response: responseEncrypt
+        // });
+
+        return res.status(jsonData.statusCode).send({
+            response: responseDecrypt
+        });
 
     } catch (error) {
         next(error);
@@ -52,7 +74,17 @@ export const getPostById = async (req, res, next) => {
         const post = await getPostDataById(id);
         if (!post) throw new ResponseError("Post data is not found!", 404);
 
-        return apiResponse(res, 200, "Success get post!", post);
+        const jsonData = apiResponseV2(200, "Success get post!", post);
+        const responseEncrypt = encryptData(jsonData);
+        const responseDecrypt = decryptData(responseEncrypt);
+
+        // return res.status(jsonData.statusCode).send({ 
+        //     response: responseEncrypt
+        // });
+
+        return res.status(jsonData.statusCode).send({
+            response: responseDecrypt
+        });
 
     } catch (error) {
         next(error)
